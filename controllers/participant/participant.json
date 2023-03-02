@@ -1,6 +1,6 @@
 {
   "name": "Javier Melero Deza",
-  "description": "Low level joint control with RL",
+  "description": "Motion behavior control with RL",
   "country": "ISO 3166-1 alpha-2 ES",
   "programming": "Python"
 }
