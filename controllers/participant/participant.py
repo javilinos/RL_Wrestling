@@ -14,14 +14,13 @@
 
 """Minimalist controller example for the Robot Wrestling Tournament.
    Demonstrates how to play a simple motion file."""
-
-from controller import Robot
 import sys
+sys.path.append('..')
+from utils.motion_library import MotionLibrary
+from controller import Robot
 
 # We provide a set of utilities to help you with the development of your controller. You can find them in the utils folder.
 # If you want to see a list of examples that use them, you can go to https://github.com/cyberbotics/wrestling#demo-robot-controllers
-sys.path.append('..')
-from utils.motion_library import MotionLibrary
 
 
 class Wrestler (Robot):
@@ -31,7 +30,7 @@ class Wrestler (Robot):
         # retrieves the WorldInfo.basicTimeTime (ms) from the world file
         time_step = int(self.getBasicTimeStep())
         while self.step(time_step) != -1:  # mandatory function to make the simulation run
-            motion_library.play('Backwards')
+            motion_library.play('Forwards')
 
 
 # create the Robot instance and run main loop
