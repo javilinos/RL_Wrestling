@@ -18,19 +18,23 @@ import sys
 sys.path.append('..')
 from utils.motion_library import MotionLibrary
 from controller import Robot
-
+from observation_state import Observation
 # We provide a set of utilities to help you with the development of your controller. You can find them in the utils folder.
 # If you want to see a list of examples that use them, you can go to https://github.com/cyberbotics/wrestling#demo-robot-controllers
 
 
-class Wrestler (Robot):
+class Wrestler(Robot):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.time_step = int(self.getBasicTimeStep())
     def run(self):
         # to load all the motions from the motions folder, we use the MotionLibrary class:
         motion_library = MotionLibrary()
-        # retrieves the WorldInfo.basicTimeTime (ms) from the world file
-        time_step = int(self.getBasicTimeStep())
-        while self.step(time_step) != -1:  # mandatory function to make the simulation run
+        observation = Observation(self)
+        # retrieves the WorldInfo.basicTimeTime (ms) from the world file 
+        while self.step(self.time_step) != -1:  # mandatory function to make the simulation run
             motion_library.play('Forwards')
+            #observation.print_observations()
 
 
 # create the Robot instance and run main loop
