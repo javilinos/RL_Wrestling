@@ -12,7 +12,10 @@ RUN pip3 install --upgrade pip && \
     opencv-python \
     scipy \
     ahrs \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 \
+    
+RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 
+
+RUN pip3 install --no-cache-dir \
     stable-baselines3 \
     sb3-contrib \
     gymnasium \
