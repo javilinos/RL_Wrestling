@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt update && \
     apt install software-properties-common -y && \
     add-apt-repository ppa:graphics-drivers && \
-    apt install nvidia-driver-510 -y
+    apt install nvidia-driver-525 -y
 
 RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
