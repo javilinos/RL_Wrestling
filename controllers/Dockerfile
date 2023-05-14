@@ -1,4 +1,4 @@
-FROM cyberbotics/webots.cloud:R2023a-ubuntu20.04-numpy
+FROM cyberbotics/webots.cloud:R2023b-ubuntu22.04-09.03.2023
 
 # Additional dependencies for the utils folder
 RUN apt-get update && apt-get install -y \
@@ -9,6 +9,7 @@ RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https:/
 
 RUN pip3 install --upgrade pip && \
     pip3 install --no-cache-dir \
+    numpy \
     opencv-python \
     scipy \
     ahrs \
