@@ -10,7 +10,7 @@ RUN apt update && \
     add-apt-repository ppa:graphics-drivers && \
     apt install nvidia-driver-525 -y
 
-RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+RUN pip3 install --no-cache-dir torch torchvision torchaudio
 
 RUN pip3 install --upgrade pip && \
     pip3 install --no-cache-dir \
