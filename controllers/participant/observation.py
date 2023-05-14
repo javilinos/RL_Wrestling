@@ -16,10 +16,10 @@ import cv2
 
 class Observation():
     def __init__(self, wrestler):
-        self.robot = Supervisor.getFromDef(Supervisor, 'WRESTLER_RED').getFromProtoDef('HEAD_SLOT')
-        self.oponent = Supervisor.getFromDef(Supervisor, 'WRESTLER_BLUE').getFromProtoDef('HEAD_SLOT')
-        self.camera = Camera(wrestler, 'CameraTop')
+        # self.robot = Supervisor.getFromDef(Supervisor, 'WRESTLER_RED').getFromProtoDef('HEAD_SLOT')
+        # self.oponent = Supervisor.getFromDef(Supervisor, 'WRESTLER_BLUE').getFromProtoDef('HEAD_SLOT')
         self.fall_detector = FallDetection(int(wrestler.getBasicTimeStep()), wrestler)
+        self.camera = Camera(wrestler, 'CameraTop')
         self.tm = TransformManager()
         self.wrestler = wrestler
         self.joints_sensors = ["LHipYawPitchS","LHipRollS","LHipPitchS","LKneePitchS","LAnklePitchS","LAnkleRollS","RHipYawPitchS","RHipRollS","RHipPitchS","RKneePitchS","RAnklePitchS","RAnkleRollS"]
