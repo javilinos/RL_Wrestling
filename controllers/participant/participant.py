@@ -208,13 +208,17 @@ class Wrestler(Robot):
         #################################################################################
         ############################# TESTING ###########################################
         #################################################################################
+        print ("Initializing Fall detector")
         self.fall_detector = FallDetection(self.time_step, self)
+        print ("Initializing Observation")
         observation = Observation(self)
+        print ("Initializing Action")
         action_node = Action(self, self.time_step)
         lstm_states = None
         num_envs = 1
         # Episode start signals are used to reset the lstm states
         episode_starts = np.ones((num_envs,), dtype=bool)
+        print ("Initializing RL model")
         model = RecurrentPPO.load("winner_model.zip")
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
