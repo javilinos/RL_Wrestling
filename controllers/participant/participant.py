@@ -177,7 +177,6 @@ class CustomCNN(BaseFeaturesExtractor):
 class Wrestler(Robot):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.time_step = int(self.getBasicTimeStep())
     def run(self):
         #################################################################################
         ############################# TRAINING ##########################################
@@ -208,16 +207,17 @@ class Wrestler(Robot):
         #################################################################################
         ############################# TESTING ###########################################
         #################################################################################
-        self.fall_detector = FallDetection(self.time_step, self)
+        time_step = int(self.getBasicTimeStep())
+        self.fall_detector = FallDetection(time_step, self)
         observation = Observation(self)
-        action_node = Action(self, self.time_step)
+        action_node = Action(self, time_step)
         lstm_states = None
         num_envs = 1
         # Episode start signals are used to reset the lstm states
         episode_starts = np.ones((num_envs,), dtype=bool)
-        model = RecurrentPPO.load("attacker_model/winner_model.zip")
+        model = RecurrentPPO.load("winner_model.zip")
 
-        while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
+        while self.step(time_step) != -1 :  # mandatory function to make the simulation run
             if (self.fall_detector.check()):
                 action_node.reset_gait_manager()
             obs = observation.get_observation_image()

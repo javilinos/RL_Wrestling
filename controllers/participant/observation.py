@@ -22,9 +22,9 @@ class Observation():
         self.camera = Camera(wrestler, 'CameraTop')
         self.tm = TransformManager()
         self.wrestler = wrestler
-        self.joints_sensors = ["LHipYawPitchS","LHipRollS","LHipPitchS","LKneePitchS","LAnklePitchS","LAnkleRollS","RHipYawPitchS","RHipRollS","RHipPitchS","RKneePitchS","RAnklePitchS","RAnkleRollS"]
-        for joint_sensor in self.joints_sensors:
-            self.wrestler.getDevice(joint_sensor).enable(30)
+        # self.joints_sensors = ["LHipYawPitchS","LHipRollS","LHipPitchS","LKneePitchS","LAnklePitchS","LAnkleRollS","RHipYawPitchS","RHipRollS","RHipPitchS","RKneePitchS","RAnklePitchS","RAnkleRollS"]
+        # for joint_sensor in self.joints_sensors:
+        #     self.wrestler.getDevice(joint_sensor).enable(30)
 
     # def oponent_observation(self):
     #     size, y, x = ImageProcessing.locate_opponent(self.get_image())
