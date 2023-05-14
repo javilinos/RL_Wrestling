@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN nvidia-smi
+RUN sudo apt install nvidia-driver-440
 
 RUN pip3 install --upgrade pip && \
     pip3 install --no-cache-dir \
