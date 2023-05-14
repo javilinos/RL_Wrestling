@@ -9,13 +9,13 @@ RUN pip3 install --upgrade pip && \
     opencv-python \
     scipy \
     ahrs \
-    stable-baselines3[extra] \
-    sb3-contrib \
-    gymnasium \
-    pytransform3d \
     torch \
     torchvision \
-    torchaudio
+    torchaudio \
+    stable-baselines3 \
+    sb3-contrib \
+    gymnasium \
+    pytransform3d 
 
 # Environment variables needed for Webots
 # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#remote-extern-controllers
