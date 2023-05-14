@@ -8,7 +8,11 @@ RUN pip3 install --upgrade pip && \
     pip3 install --no-cache-dir \
     opencv-python \
     scipy \
-    ahrs
+    ahrs \
+    stable-baselines3[extra] \
+    sb3-contrib \
+    gymnasium \
+    pytransform3d
 
 # Environment variables needed for Webots
 # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#remote-extern-controllers
