@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+RUN add-apt-repository ppa:graphics-drivers/ppa
+
 RUN apt-get install nvidia-driver-440
 
 RUN pip3 install --upgrade pip && \
