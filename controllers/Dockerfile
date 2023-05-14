@@ -1,14 +1,20 @@
-FROM cyberbotics/webots.cloud:R2023b-ubuntu22.04-09.03.2023
+FROM cyberbotics/webots.cloud:R2023a-ubuntu20.04-numpy
 
 # Additional dependencies for the utils folder
 RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt update && \
+    apt install software-properties-common -y && \
+    add-apt-repository ppa:graphics-drivers && \
+    apt install nvidia-driver-510 -y
+
 RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN pip3 install --upgrade pip && \
     pip3 install --no-cache-dir \
+    numpy \
     opencv-python \
     scipy \
     ahrs \
