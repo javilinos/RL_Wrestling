@@ -5,10 +5,15 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt update && \
-    apt install software-properties-common -y && \
-    add-apt-repository ppa:graphics-drivers && \
-    apt install nvidia-driver-525 -y
+RUN apt install wget 
+
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+RUN mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+RUN wget https://developer.download.nvidia.com/compute/cuda/11.7.0/local_installers/cuda-repo-ubuntu2004-11-7-local_11.7.0-515.43.04-1_amd64.deb
+RUN dpkg -i cuda-repo-ubuntu2004-11-7-local_11.7.0-515.43.04-1_amd64.deb
+RUN cp /var/cuda-repo-ubuntu2004-11-7-local/cuda-*-keyring.gpg /usr/share/keyrings/
+RUN apt-get update
+RUN apt-get -y install cuda
 
 RUN pip3 install --no-cache-dir torch torchvision torchaudio
 
