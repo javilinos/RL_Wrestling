@@ -1,31 +1,50 @@
-FROM cyberbotics/webots.cloud:R2023a-ubuntu20.04-numpy
+ARG BASE_IMAGE=nvidia/cuda:12.0.0-runtime-ubuntu22.04
+FROM ${BASE_IMAGE} AS downloader
 
+# Determine Webots version to be used and set default argument
+ARG WEBOTS_VERSION=R2023a
+ARG WEBOTS_PACKAGE_PREFIX=
+
+# Disable dpkg/gdebi interactive dialogs
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install --yes wget bzip2 && rm -rf /var/lib/apt/lists/ && \
+ wget https://github.com/cyberbotics/webots/releases/download/$WEBOTS_VERSION/webots-$WEBOTS_VERSION-x86-64$WEBOTS_PACKAGE_PREFIX.tar.bz2 && \
+ tar xjf webots-*.tar.bz2 && rm webots-*.tar.bz2
+
+FROM ${BASE_IMAGE}
+
+# Disable dpkg/gdebi interactive dialogs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Webots runtime dependencies
+RUN apt-get update && apt-get install --yes wget xvfb && rm -rf /var/lib/apt/lists/ && \
+  wget https://raw.githubusercontent.com/cyberbotics/webots/master/scripts/install/linux_runtime_dependencies.sh && \
+  chmod +x linux_runtime_dependencies.sh && ./linux_runtime_dependencies.sh && rm ./linux_runtime_dependencies.sh && rm -rf /var/lib/apt/lists/
+
+# Install Webots
+WORKDIR /usr/local
+COPY --from=downloader /webots /usr/local/webots/
+ENV QTWEBENGINE_DISABLE_SANDBOX=1
+ENV WEBOTS_HOME /usr/local/webots
+ENV PATH /usr/local/webots:${PATH}
+
+# Enable OpenGL capabilities
+ENV NVIDIA_DRIVER_CAPABILITIES=graphics
+
+RUN apt update && apt-get install python3-pip -y
+
+RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 # Additional dependencies for the utils folder
 RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
-
-RUN apt install wget 
-
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
-RUN mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-RUN wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-ubuntu2004-11-8-local_11.8.0-520.61.05-1_amd64.deb
-RUN dpkg -i cuda-repo-ubuntu2004-11-8-local_11.8.0-520.61.05-1_amd64.deb
-RUN cp /var/cuda-repo-ubuntu2004-11-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
-RUN apt-get update
-RUN apt-get -y install cuda
-
-RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-
 RUN pip3 install --upgrade pip && \
     pip3 install --no-cache-dir \
     numpy \
     opencv-python \
     scipy \
     ahrs \
-    torch \
-    torchvision \
-    torchaudio \
     stable-baselines3 \
     sb3-contrib \
     gymnasium \
@@ -38,11 +57,13 @@ ENV PYTHONIOENCODING=UTF-8
 ENV LD_LIBRARY_PATH=${WEBOTS_HOME}/lib/controller:${LD_LIBRARY_PATH}
 ARG WEBOTS_CONTROLLER_URL
 ENV WEBOTS_CONTROLLER_URL=${WEBOTS_CONTROLLER_URL}
-ENV NVIDIA_DRIVER_CAPABILITIES=graphics
 
 # Copies all the files of the controllers folder into the docker container
 RUN mkdir -p /usr/local/webots-project/controllers
 COPY . /usr/local/webots-project/controllers
+
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
 # Entrypoint command to launch default Python controller script
 # (In shell form to allow variable expansion)
