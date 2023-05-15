@@ -107,30 +107,10 @@ class CustomCallback(BaseCallback):
 
 class CustomCNN(BaseFeaturesExtractor):
 
-    def __init__(
-        self,
-        observation_space: gym.Space,
-        features_dim: int = 512,
-        normalized_image: bool = False,
-    ) -> None:
-        # assert isinstance(observation_space, spaces.Box), (
-        #     "NatureCNN must be used with a gym.spaces.Box ",
-        #     f"observation space, not {observation_space}",
-        # )
+    def __init__(self, observation_space: gym.Space, features_dim: int = 512, normalized_image: bool = False) -> None:
+        print("using custom cnn")
         super().__init__(observation_space, features_dim)
-        # We assume CxHxW images (channels first)
-        # Re-ordering will be done by pre-preprocessing or wrapper
-        # assert is_image_space(observation_space, check_channels=False, normalized_image=normalized_image), (
-        #     "You should use NatureCNN "
-        #     f"only with images not with {observation_space}\n"
-        #     "(you are probably using `CnnPolicy` instead of `MlpPolicy` or `MultiInputPolicy`)\n"
-        #     "If you are using a custom environment,\n"
-        #     "please check it using our env checker:\n"
-        #     "https://stable-baselines3.readthedocs.io/en/master/common/env_checker.html.\n"
-        #     "If you are using `VecNormalize` or already normalized channel-first images "
-        #     "you should pass `normalize_images=False`: \n"
-        #     "https://stable-baselines3.readthedocs.io/en/master/guide/custom_env.html"
-        # )
+
         n_input_channels = observation_space.shape[0]
 
         self.cnn = nn.Sequential(
@@ -144,7 +124,6 @@ class CustomCNN(BaseFeaturesExtractor):
             nn.ReLU(),
             nn.Flatten(),
         )
-        print("using custom cnn")
         # Compute shape by doing one forward pass
         with th.no_grad():
             n_flatten = self.cnn(th.as_tensor(observation_space.sample()[None]).float()).shape[1]

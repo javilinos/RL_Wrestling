@@ -50,7 +50,7 @@ class Observation():
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         resized = cv2.resize(gray, (84, 84))
-        array_image = np.expand_dims(resized, axis=2)
+        array_image = np.expand_dims(resized, axis=0)
         return array_image
 
 
