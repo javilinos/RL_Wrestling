@@ -18,6 +18,7 @@ import sys
 from time import time, sleep
 sys.path.append('..')
 import numpy as np
+import pickle
 
 from utils.fall_detection import FallDetection
 
@@ -43,6 +44,8 @@ from stable_baselines3.common.preprocessing import is_image_space
 
 # We provide a set of utilities to help you with the development of your controller. You can find them in the utils folder.
 # If you want to see a list of examples that use them, you can go to https://github.com/cyberbotics/wrestling#demo-robot-controllers
+
+model = RecurrentPPO.load("winner_model.zip")
 
 class CustomCallback(BaseCallback):
     """
@@ -198,7 +201,6 @@ class Wrestler(Robot):
         # Episode start signals are used to reset the lstm states
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
-        model = RecurrentPPO.load("winner_model.zip")
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             if (self.fall_detector.check()):
