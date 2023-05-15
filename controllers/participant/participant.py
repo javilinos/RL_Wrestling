@@ -192,7 +192,7 @@ class Wrestler(Robot):
         #################################################################################
         ############################# TESTING ###########################################
         #################################################################################
-        t1 = self.getTime()
+        # t1 = self.getTime()
         print ("Initializing Fall detector")
         fall_detector = FallDetection(self.time_step, self)
         print ("Initializing Observation")
@@ -205,21 +205,18 @@ class Wrestler(Robot):
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
         rl_model = RecurrentPPO.load("winner_model.zip")
-        done = False
+
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
-            t2 = self.getTime()
-            if (t2-t1) < 4:
-                self.action_node.execute_action([0.0])
-                done = True
-            else:
-                if (fall_detector.check()):
-                    self.action_node.reset_gait_manager()
-                obs = observation.image_to_predict()
-                action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
-                self.action_node.execute_action(action)
-            if done:
+            # t2 = self.getTime()
+            # if (t2-t1) < 4:
+            #     self.action_node.execute_action([0.0])
+
+            # else:
+            if (fall_detector.check()):
                 self.action_node.reset_gait_manager()
-                done = False
+            obs = observation.image_to_predict()
+            action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
+            self.action_node.execute_action(action)
 
         #################################################################################
         ############################# EVALUATING ########################################
