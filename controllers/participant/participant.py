@@ -192,6 +192,7 @@ class Wrestler(Robot):
         #################################################################################
         ############################# TESTING ###########################################
         #################################################################################
+        t1 = self.getTime()
         print ("Initializing Fall detector")
         self.fall_detector = FallDetection(self.time_step, self)
         print ("Initializing Observation")
@@ -207,8 +208,8 @@ class Wrestler(Robot):
         
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
-            t = self.getTime()
-            if t < 2:
+            t2 = self.getTime()
+            if (t2-t1) < 2:
                 self.action_node.execute_action([0.0])
                 print("waking forward")
             else:
