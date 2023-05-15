@@ -18,7 +18,7 @@ class Environment(Env):
         self.frames = []
         self.action_space = spaces.Box(np.array((-1.0)), np.array((1.0)), dtype=np.float32)
         # self.observation_space = spaces.Box(np.array((-1.0, -1.0, -1.0, -1.0, -1.0, -1.0)), np.array((1.0, 1.0, 1.0, 1.0, 1.0, 1.0)), dtype=np.float32)
-        self.observation_space = spaces.Box(low=0, high=255, shape=(84, 84, self.num_frames), dtype=np.uint8)
+        self.observation_space = spaces.Box(low=0, high=255, shape=(self.num_frames, 84, 84), dtype=np.uint8)
         self.render_mode = False
         self.robot = robot 
         self.observation = observation
@@ -47,7 +47,7 @@ class Environment(Env):
         self.action.execute_action(action)
         obs_state = self.observation.get_observation_state()
         self.frames.append(self.observation.get_observation_image())
-        self.observation.get_joint_states()
+        #self.observation.get_joint_states()
         self.frames.pop(0)
         rew, done = self.reward.calculate_reward(
             obs_state[0], obs_state[1], obs_state[2], obs_state[3], obs_state[4], obs_state[5], obs_state[6], obs_state[7], obs_state[8])
@@ -55,10 +55,10 @@ class Environment(Env):
         # rew+=self.reward.calculate_action_reward(obs_state, action)
         if self.n_steps > 2048:
             done = True
-            rew = -10
+            rew = 10
             self.n_steps = 0
 
-        obs = np.stack(self.frames, axis=2)
+        obs = np.stack(self.frames, axis=0)
         
         return obs, rew, done, False, {}
 
@@ -98,7 +98,7 @@ class Environment(Env):
         
         self.reward.clean_reward()
         self.reward.clean_min_max(obs_state[0], obs_state[1])
-        obs = np.stack(self.frames, axis=2)
+        obs = np.stack(self.frames, axis=0)
         
         return obs, {}
     

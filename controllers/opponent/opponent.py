@@ -30,6 +30,10 @@ from utils.image_processing import ImageProcessing as IP
 from utils.gait_manager import GaitManager
 from threading import Thread
 from participant.shared import res, reset
+from participant.action import Action
+from participant.observation import Observation
+from sb3_contrib import RecurrentPPO
+import numpy as np
 import cv2
 import random
 from multiprocessing import shared_memory
@@ -355,6 +359,39 @@ class Fatima ():
         # Time before changing direction to stop the robot from falling off the ring
         self.counter = 0
         shm_b.buf[0] = 0
+
+class AttackerModel():
+    def __init__(self, robot: Supervisor, *args, **kwargs) -> None:
+        self.robot = robot
+        self.time_step = int(self.robot.getBasicTimeStep())
+        self.action_node = Action(self.robot, self.time_step)
+
+    def run(self):
+        global shm_b
+        shm_b.buf[0] = 0
+        print ("Initializing Fall detector")
+        fall_detector = FallDetection(self.time_step, self.robot)
+        print ("Initializing Observation")
+        observation = Observation(self.robot)
+        print ("Initializing Action")
+        
+        lstm_states = None
+        num_envs = 1
+        # Episode start signals are used to reset the lstm states
+        episode_starts = np.ones((num_envs,), dtype=bool)
+        print ("Initializing RL model")
+        rl_model = RecurrentPPO.load("../participant/winner_model.zip")
+
+        while shm_b.buf[0] == 0 : 
+            self.robot.step(self.time_step)
+            if (fall_detector.check()):
+                self.action_node.reset_gait_manager()
+            obs = observation.image_to_predict()
+            action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
+            self.action_node.execute_action(action)
+    
+    def reset(self):
+        self.action_node.reset_gait_manager()
         
     
 class AllInOneRobot(Supervisor):
@@ -367,11 +404,11 @@ class AllInOneRobot(Supervisor):
     def run(self):
         op_id = random.randint(1, 1)
         print (f"oponent {op_id} loaded")
-        oponnent = self.opponents[op_id](self)     
-        oponnent.run()
-        oponnent.reset()
+        opponent = self.opponents[op_id](self) 
+        # opponent = AttackerModel(self)   
+        opponent.run()
+        opponent.reset()
         time.sleep(0.5)
-        del oponnent
 
 # create the Robot instance and run main loop
 #oponents = {1: Bob, 2: Charlie, 3: David, 4: Fatima}

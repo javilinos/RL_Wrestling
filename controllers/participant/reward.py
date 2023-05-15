@@ -40,13 +40,13 @@ class Reward:
                 
         distance = math.sqrt(rel_x**2 + rel_y**2)
         distance = distance / 2.45
-        distance = -distance
+        distance = -(1 - distance)
         distance = np.clip(distance, -1.0, 0.0)
-        # reward += distance * 0.01
+        reward += distance * 0.1
 
-        rel_yaw = 1 - abs(rel_yaw_2_oponent)
-        rel_yaw = rel_yaw*2 - 1
-        reward += rel_yaw * 0.1
+        # rel_yaw = 1 - abs(rel_yaw_2_oponent)
+        # rel_yaw = rel_yaw*2 - 1
+        # reward += rel_yaw * 0.1
 
         distance_to_center = math.sqrt(position[0]**2 + position[1]**2)
         distance_to_center = distance_to_center/math.sqrt(2)
@@ -70,16 +70,19 @@ class Reward:
             done = True
 
         if abs(op_pos_x) > 1.5 or abs(op_pos_y) > 1.5 or op_pos_z < 0.9:
-            reward = 10
+            #reward = 10
             self.ko_count = 0
             self.coverage_gained = 0.0
             done = True
 
-        if distance > -0.2 and rel_yaw > 0.9:
-            reward = 10
+        # if distance > -0.2 and rel_yaw > 0.9:
+        if distance < -0.8:
+            reward = -10
             self.op_ko_count = 0
             self.coverage_gained = 0.0
             done = True
+
+        reward += 0.01
 
         return reward, done
     

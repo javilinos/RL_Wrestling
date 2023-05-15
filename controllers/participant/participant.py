@@ -174,7 +174,7 @@ class Wrestler(Robot):
         
         # env = Environment(observation, action, reward, self)
         # env = Monitor(env)
-        # checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_5", name_prefix="rl_model")
+        # checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_6", name_prefix="dodger_model")
         # #checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_1", name_prefix="rl_model")
         # model = RecurrentPPO("CnnLstmPolicy", env, tensorboard_log="/home/javilinos/PPO", verbose=1, ent_coef=0.01, learning_rate=3e-05, gae_lambda=0.95, clip_range=0.1, n_steps=512, batch_size=128, n_epochs=10, normalize_advantage=True, use_sde=True, sde_sample_freq=8, policy_kwargs=dict(
         #     ortho_init = True,
@@ -194,7 +194,7 @@ class Wrestler(Robot):
         #################################################################################
         t1 = self.getTime()
         print ("Initializing Fall detector")
-        self.fall_detector = FallDetection(self.time_step, self)
+        fall_detector = FallDetection(self.time_step, self)
         print ("Initializing Observation")
         observation = Observation(self)
         print ("Initializing Action")
@@ -205,18 +205,21 @@ class Wrestler(Robot):
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
         rl_model = RecurrentPPO.load("winner_model.zip")
-
+        done = False
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             t2 = self.getTime()
             if (t2-t1) < 4:
                 self.action_node.execute_action([0.0])
-                print("waking forward")
+                done = True
             else:
-                if (self.fall_detector.check()):
+                if (fall_detector.check()):
                     self.action_node.reset_gait_manager()
-                obs = observation.get_observation_image()
+                obs = observation.image_to_predict()
                 action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
                 self.action_node.execute_action(action)
+            if done:
+                self.action_node.reset_gait_manager()
+                done = False
 
         #################################################################################
         ############################# EVALUATING ########################################

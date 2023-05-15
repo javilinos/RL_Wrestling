@@ -49,6 +49,21 @@ class Observation():
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         resized = cv2.resize(gray, (84, 84))
+        
+        return resized
+    
+    def image_to_predict(self):
+        img = self.camera.get_image()
+        
+        # those spikes are then smoothed out using a Gaussian blur to get blurry blobs
+        # we apply a threshold to get a binary image of potential robot locations
+        #laplacian = cv2.Laplacian(img, cv2.CV_8U, ksize=3)
+
+        # blur = cv2.GaussianBlur(laplacian, (0, 0), 2)
+
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        resized = cv2.resize(gray, (84, 84))
         array_image = np.expand_dims(resized, axis=2)
         return array_image
 

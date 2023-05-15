@@ -70,4 +70,5 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 # Entrypoint command to launch default Python controller script
 # (In shell form to allow variable expansion)
 WORKDIR /usr/local/webots-project/controllers/participant
+
 ENTRYPOINT python3 -u participant.py

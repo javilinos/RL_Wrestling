@@ -24,7 +24,8 @@ class Action():
         # self.robot.library.play(self.actions[action])
         # self.robot.library.stop(self.actions[action])
         self.robot.getDevice('HeadPitch').setPosition(0.3)
-
+        # self.robot.getDevice('RShoulderPitch').setPosition(-1.0)
+        # self.robot.getDevice('LShoulderPitch').setPosition(-1.0)
         desired_radius = action[0]*0.1
         heading_angle = 0.0
         self.gait_manager.update_theta()
