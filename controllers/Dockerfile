@@ -34,7 +34,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES=graphics
 
 RUN apt update && apt-get install python3-pip -y
 
-RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+RUN pip3 install --no-cache-dir torch torchvision torchaudio
 # Additional dependencies for the utils folder
 RUN apt-get update && apt-get install -y \
     python3-pip \
