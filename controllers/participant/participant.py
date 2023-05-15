@@ -19,6 +19,8 @@ from time import time, sleep
 sys.path.append('..')
 import numpy as np
 import pickle
+from time import time
+import threading
 
 from utils.fall_detection import FallDetection
 
@@ -156,9 +158,10 @@ class CustomCNN(BaseFeaturesExtractor):
 
 class Wrestler(Robot):
     def __init__(self, *args, **kwargs) -> None:
-        self.rl_model = RecurrentPPO.load("winner_model.zip")
         super().__init__(*args, **kwargs)
         self.time_step = int(self.getBasicTimeStep())
+        self.action_node = Action(self, self.time_step)
+
     def run(self):
         #################################################################################
         ############################# TRAINING ##########################################
@@ -194,19 +197,26 @@ class Wrestler(Robot):
         print ("Initializing Observation")
         observation = Observation(self)
         print ("Initializing Action")
-        action_node = Action(self, self.time_step)
+        
         lstm_states = None
         num_envs = 1
         # Episode start signals are used to reset the lstm states
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
+        rl_model = RecurrentPPO.load("winner_model.zip")
+        
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
-            if (self.fall_detector.check()):
-                action_node.reset_gait_manager()
-            obs = observation.get_observation_image()
-            action, lstm_states = self.rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
-            action_node.execute_action(action)
+            t = self.getTime()
+            if t < 1:
+                self.action_node.execute_action([0.0])
+                print("waking forward")
+            else:
+                if (self.fall_detector.check()):
+                    self.action_node.reset_gait_manager()
+                obs = observation.get_observation_image()
+                action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
+                self.action_node.execute_action(action)
 
         #################################################################################
         ############################# EVALUATING ########################################
