@@ -198,7 +198,7 @@ class Wrestler(Robot):
         # Episode start signals are used to reset the lstm states
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
-        model = RecurrentPPO.load("winner_model.zip", features_extractor_class=CustomCNN)
+        model = RecurrentPPO.load("winner_model.zip")
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             if (self.fall_detector.check()):
