@@ -45,8 +45,6 @@ from stable_baselines3.common.preprocessing import is_image_space
 # We provide a set of utilities to help you with the development of your controller. You can find them in the utils folder.
 # If you want to see a list of examples that use them, you can go to https://github.com/cyberbotics/wrestling#demo-robot-controllers
 
-model = RecurrentPPO.load("winner_model.zip")
-
 class CustomCallback(BaseCallback):
     """
     A custom callback that derives from ``BaseCallback``.
@@ -158,6 +156,7 @@ class CustomCNN(BaseFeaturesExtractor):
 
 class Wrestler(Robot):
     def __init__(self, *args, **kwargs) -> None:
+        self.rl_model = RecurrentPPO.load("winner_model.zip")
         super().__init__(*args, **kwargs)
         self.time_step = int(self.getBasicTimeStep())
     def run(self):
@@ -206,7 +205,7 @@ class Wrestler(Robot):
             if (self.fall_detector.check()):
                 action_node.reset_gait_manager()
             obs = observation.get_observation_image()
-            action, lstm_states = model.predict(obs, state=lstm_states, episode_start=episode_starts)
+            action, lstm_states = self.rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
             action_node.execute_action(action)
 
         #################################################################################
