@@ -205,11 +205,10 @@ class Wrestler(Robot):
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
         rl_model = RecurrentPPO.load("winner_model.zip")
-        
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             t2 = self.getTime()
-            if (t2-t1) < 2:
+            if (t2-t1) < 3:
                 self.action_node.execute_action([0.0])
                 print("waking forward")
             else:
