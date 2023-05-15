@@ -208,7 +208,7 @@ class Wrestler(Robot):
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             t = self.getTime()
-            if t < 1:
+            if t < 2:
                 self.action_node.execute_action([0.0])
                 print("waking forward")
             else:
