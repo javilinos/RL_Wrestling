@@ -18,7 +18,6 @@ class Observation():
     def __init__(self, wrestler):
         # self.robot = Supervisor.getFromDef(Supervisor, 'WRESTLER_RED').getFromProtoDef('HEAD_SLOT')
         # self.oponent = Supervisor.getFromDef(Supervisor, 'WRESTLER_BLUE').getFromProtoDef('HEAD_SLOT')
-        self.fall_detector = FallDetection(int(wrestler.getBasicTimeStep()), wrestler)
         self.camera = Camera(wrestler, 'CameraTop')
         self.tm = TransformManager()
         self.wrestler = wrestler
@@ -81,12 +80,6 @@ class Observation():
         obs = [position[0], position[1], position[2], oponent_position[0], oponent_position[1], oponent_position[2], p[0], p[1], yaw_normalized]
 
         return obs
-
-    def set_time_step(self, time_step):
-        self.fall_detector.time_step = time_step
-
-    def _detect_fall(self):
-        return [float(self.fall_detector.detect_fall())]
 
     def get_observation_state(self):
         

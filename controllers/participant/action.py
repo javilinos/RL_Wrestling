@@ -10,11 +10,11 @@ class Action():
         # "RHipPitch", "RKneePitch", "RAnklePitch", "RAnkleRoll", "LShoulderPitch", "LShoulderRoll", "LElbowYaw", 
         # "LElbowRoll", "LHipYawPitch", "LHipRoll",
         # "LHipPitch", "LKneePitch", "LAnklePitch", "LAnkleRoll"] // will use it later
-        self.joints = ["LHipYawPitch","LHipRoll","LHipPitch","LKneePitch","LAnklePitch","LAnkleRoll","RHipYawPitch","RHipRoll","RHipPitch","RKneePitch","RAnklePitch","RAnkleRoll"]
+        # self.joints = ["LHipYawPitch","LHipRoll","LHipPitch","LKneePitch","LAnklePitch","LAnkleRoll","RHipYawPitch","RHipRoll","RHipPitch","RKneePitch","RAnklePitch","RAnkleRoll"]
 
-        self.actions = ["Forwards", "Backwards", "SideStepLeft", "SideStepRight", "TurnLeft20", "TurnRight20", "Shove"]
-        robot.library = MotionLibrary()
-        robot.library.add('Shove', './Shove.motion', loop=False)
+        # self.actions = ["Forwards", "Backwards", "SideStepLeft", "SideStepRight", "TurnLeft20", "TurnRight20", "Shove"]
+        # robot.library = MotionLibrary()
+        # robot.library.add('Shove', './Shove.motion', loop=False)
         self.robot = robot
         self.time_step = time_step
         self.gait_manager = GaitManager(self.robot, self.time_step)
