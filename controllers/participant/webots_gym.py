@@ -57,7 +57,7 @@ class Environment(Env):
         # rew+=self.reward.calculate_action_reward(obs_state, action)
         if self.n_steps > 2048:
             done = True
-            rew = -5
+            rew = 10
             self.n_steps = 0
 
         obs = np.stack(self.frames, axis=0)
