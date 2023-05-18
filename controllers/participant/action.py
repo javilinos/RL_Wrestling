@@ -63,10 +63,9 @@ class Action():
         self.gait_manager = GaitManager(self.robot, self.time_step)
 
     def hit_front_robot(self):
-        self.robot.getDevice('RShoulderRoll').setPosition(0.5)
-        self.robot.getDevice('LShoulderRoll').setPosition(-0.5)
-        self.robot.getDevice('RShoulderPitch').setPosition(0.0)
-        self.robot.getDevice('LShoulderPitch').setPosition(0.0)
+        while not self.robot.library.isOver("Shove"):
+            self.robot.step(self.time_step)
+            self.robot.library.play("Shove")
 
     def arms_to_normal_position(self):
         self.robot.getDevice('RShoulderPitch').setPosition(1.2)

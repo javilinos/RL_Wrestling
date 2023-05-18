@@ -213,11 +213,11 @@ class Wrestler(Robot):
             # else:
             if (fall_detector.check()):
                 self.action_node.reset_gait_manager()
-            area = observation.detect_robot_position()
-            if area is not None and area < 250 and area > 100:
-                self.action_node.hit_front_robot()
-            else:
-                self.action_node.arms_to_normal_position()
+            # area = observation.detect_robot_position()
+            # if area is not None and area < 250 and area > 200:
+            #     self.action_node.hit_front_robot()
+
+            # self.action_node.arms_to_normal_position()
             obs = observation.image_to_predict()
             
             action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
