@@ -3,6 +3,7 @@
 #from utils.camera import Camera
 from controller import Supervisor
 from utils.fall_detection import FallDetection
+from utils.image_processing import ImageProcessing
 from utils.camera import Camera
 import numpy as np
 import math
@@ -16,10 +17,11 @@ import cv2
 
 class Observation():
     def __init__(self, wrestler):
-        # self.robot = Supervisor.getFromDef(Supervisor, 'WRESTLER_RED').getFromProtoDef('HEAD_SLOT')
-        # self.oponent = Supervisor.getFromDef(Supervisor, 'WRESTLER_BLUE').getFromProtoDef('HEAD_SLOT')
+        self.robot = Supervisor.getFromDef(Supervisor, 'WRESTLER_RED').getFromProtoDef('HEAD_SLOT')
+        self.oponent = Supervisor.getFromDef(Supervisor, 'WRESTLER_BLUE').getFromProtoDef('HEAD_SLOT')
         self.camera = Camera(wrestler, 'CameraTop')
         self.tm = TransformManager()
+        self.image_processing = ImageProcessing()
         self.wrestler = wrestler
         # self.joints_sensors = ["LHipYawPitchS","LHipRollS","LHipPitchS","LKneePitchS","LAnklePitchS","LAnkleRollS","RHipYawPitchS","RHipRollS","RHipPitchS","RKneePitchS","RAnklePitchS","RAnkleRollS"]
         # for joint_sensor in self.joints_sensors:
@@ -163,3 +165,7 @@ class Observation():
             normalized_joints.append(normalized_pos)
 
         return normalized_joints
+    
+    def detect_robot_position(self):
+        area,_,_,_ = self.image_processing.locate_opponent(self.camera.get_image())
+        return area

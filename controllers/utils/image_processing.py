@@ -58,10 +58,11 @@ class ImageProcessing():
         closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15)))
         # the robot is assumed to be the largest contour
         largest_contour = cls.get_largest_contour(closing)
+        
         if largest_contour is not None:
             # we get its centroid for an approximate opponent location
             vertical_coordinate, horizontal_coordinate = cls.get_contour_centroid(largest_contour)
-            return largest_contour, vertical_coordinate, horizontal_coordinate
+            return cv2.contourArea(largest_contour), largest_contour, vertical_coordinate, horizontal_coordinate
         else:
             # if no contour is found, we return None
-            return None, None, None
+            return None, None, None, None

@@ -45,6 +45,8 @@ class Environment(Env):
 
         self.robot.step(self.time_step)
         self.action.execute_action(action)
+        # self.robot.getDevice('RShoulderPitch').setPosition(1.2)
+        # self.robot.getDevice('LShoulderPitch').setPosition(1.2)
         obs_state = self.observation.get_observation_state()
         self.frames.append(self.observation.get_observation_image())
         #self.observation.get_joint_states()
@@ -55,7 +57,7 @@ class Environment(Env):
         # rew+=self.reward.calculate_action_reward(obs_state, action)
         if self.n_steps > 2048:
             done = True
-            rew = 10
+            rew = -5
             self.n_steps = 0
 
         obs = np.stack(self.frames, axis=0)
@@ -92,6 +94,7 @@ class Environment(Env):
 
         self.node_red.resetPhysics()
         self.node_blue.resetPhysics()
+        self.robot.simulationSetMode(2)
         self.action.reset_gait_manager()
         obs_state = self.observation.get_observation_state()
         self.frames = [self.observation.get_observation_image()] * self.num_frames

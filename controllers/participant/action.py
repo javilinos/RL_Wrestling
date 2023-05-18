@@ -2,6 +2,7 @@
 
 from utils.motion_library import MotionLibrary
 from utils.gait_manager import GaitManager
+from utils.image_processing import ImageProcessing
 import numpy as np
 
 class Action():
@@ -13,8 +14,8 @@ class Action():
         # self.joints = ["LHipYawPitch","LHipRoll","LHipPitch","LKneePitch","LAnklePitch","LAnkleRoll","RHipYawPitch","RHipRoll","RHipPitch","RKneePitch","RAnklePitch","RAnkleRoll"]
 
         # self.actions = ["Forwards", "Backwards", "SideStepLeft", "SideStepRight", "TurnLeft20", "TurnRight20", "Shove"]
-        # robot.library = MotionLibrary()
-        # robot.library.add('Shove', './Shove.motion', loop=False)
+        robot.library = MotionLibrary()
+        robot.library.add('Shove', './Shove.motion', loop=False)
         self.robot = robot
         self.time_step = time_step
         self.gait_manager = GaitManager(self.robot, self.time_step)
@@ -24,8 +25,6 @@ class Action():
         # self.robot.library.play(self.actions[action])
         # self.robot.library.stop(self.actions[action])
         self.robot.getDevice('HeadPitch').setPosition(0.3)
-        # self.robot.getDevice('RShoulderPitch').setPosition(-1.0)
-        # self.robot.getDevice('LShoulderPitch').setPosition(-1.0)
         desired_radius = action[0]*0.1
         heading_angle = 0.0
         self.gait_manager.update_theta()
@@ -62,3 +61,13 @@ class Action():
     def reset_gait_manager(self):
         del self.gait_manager
         self.gait_manager = GaitManager(self.robot, self.time_step)
+
+    def hit_front_robot(self):
+        self.robot.getDevice('RShoulderRoll').setPosition(0.5)
+        self.robot.getDevice('LShoulderRoll').setPosition(-0.5)
+        self.robot.getDevice('RShoulderPitch').setPosition(0.0)
+        self.robot.getDevice('LShoulderPitch').setPosition(0.0)
+
+    def arms_to_normal_position(self):
+        self.robot.getDevice('RShoulderPitch').setPosition(1.2)
+        self.robot.getDevice('LShoulderPitch').setPosition(1.2)
