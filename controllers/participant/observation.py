@@ -25,7 +25,8 @@ class Observation():
         self.wrestler = wrestler
         # self.joints_sensors = ["LHipYawPitchS","LHipRollS","LHipPitchS","LKneePitchS","LAnklePitchS","LAnkleRollS","RHipYawPitchS","RHipRollS","RHipPitchS","RKneePitchS","RAnklePitchS","RAnkleRollS"]
         # for joint_sensor in self.joints_sensors:
-        #     self.wrestler.getDevice(joint_sensor).enable(30)
+        self.wrestler.getDevice("Sonar/Right").enable(20)
+        self.wrestler.getDevice("Sonar/Left").enable(20)
 
     # def oponent_observation(self):
     #     size, y, x = ImageProcessing.locate_opponent(self.get_image())
@@ -46,7 +47,7 @@ class Observation():
         # we apply a threshold to get a binary image of potential robot locations
         #laplacian = cv2.Laplacian(img, cv2.CV_8U, ksize=3)
 
-        # blur = cv2.GaussianBlur(laplacian, (0, 0), 2)
+        #blur = cv2.GaussianBlur(b, (0, 0), 2)
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -66,7 +67,7 @@ class Observation():
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         resized = cv2.resize(gray, (84, 84))
-        array_image = np.expand_dims(resized, axis=2)
+        array_image = np.expand_dims(resized, axis=0)
         return array_image
 
 
@@ -169,3 +170,9 @@ class Observation():
     def detect_robot_position(self):
         area,_,_,_ = self.image_processing.locate_opponent(self.camera.get_image())
         return area
+    
+    def get_l_sensor(self):
+        return self.wrestler.getDevice("Sonar/Left").getValue()
+
+    def get_r_sensor(self):
+        return self.wrestler.getDevice("Sonar/Right").getValue()

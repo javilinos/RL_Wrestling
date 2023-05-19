@@ -45,8 +45,8 @@ class Environment(Env):
 
         self.robot.step(self.time_step)
         self.action.execute_action(action)
-        # self.robot.getDevice('RShoulderPitch').setPosition(1.2)
-        # self.robot.getDevice('LShoulderPitch').setPosition(1.2)
+        self.robot.getDevice('RShoulderPitch').setPosition(1.2)
+        self.robot.getDevice('LShoulderPitch').setPosition(1.2)
         obs_state = self.observation.get_observation_state()
         self.frames.append(self.observation.get_observation_image())
         #self.observation.get_joint_states()

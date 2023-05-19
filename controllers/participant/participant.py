@@ -174,7 +174,7 @@ class Wrestler(Robot):
         
         # env = Environment(observation, action, reward, self)
         # env = Monitor(env)
-        # checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_7", name_prefix="attacker_model")
+        # checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_8", name_prefix="runner_model")
         # #checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_1", name_prefix="rl_model")
         # model = RecurrentPPO("CnnLstmPolicy", env, tensorboard_log="/home/javilinos/PPO", verbose=1, ent_coef=0.01, learning_rate=3e-05, gae_lambda=0.95, clip_range=0.1, n_steps=1024, batch_size=256, n_epochs=20, normalize_advantage=True, use_sde=True, sde_sample_freq=8, policy_kwargs=dict(
         #     ortho_init = True,
@@ -219,7 +219,10 @@ class Wrestler(Robot):
             # else:
             #     self.action_node.arms_to_normal_position()
             obs = observation.image_to_predict()
-            
+            if (observation.get_l_sensor() < 0.4 or observation.get_r_sensor() < 0.4):
+                self.action_node.hit_front_robot()
+            else:
+                self.action_node.arms_to_normal_position()
             action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
             episode_starts = np.zeros((num_envs,), dtype=bool)
             self.action_node.execute_action(action)

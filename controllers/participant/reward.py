@@ -76,13 +76,13 @@ class Reward:
             done = True
 
         #if distance > -0.2 and rel_yaw > 0.9:
-        if distance > 0.2:
+        if distance > -0.2:
             reward = -10
             self.op_ko_count = 0
             self.coverage_gained = 0.0
             done = True
 
-        reward += 0.05
+        reward += 0.01
 
         return reward, done
     

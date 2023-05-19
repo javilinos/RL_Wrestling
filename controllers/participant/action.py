@@ -63,13 +63,13 @@ class Action():
         self.gait_manager = GaitManager(self.robot, self.time_step)
 
     def hit_front_robot(self):
-        self.robot.getDevice('RShoulderRoll').setPosition(0.3)
-        self.robot.getDevice('LShoulderRoll').setPosition(-0.3)
-        self.robot.getDevice('RShoulderPitch').setPosition(-0.5)
-        self.robot.getDevice('LShoulderPitch').setPosition(-0.5)
+        self.robot.getDevice('RShoulderRoll').setPosition(0.10)
+        self.robot.getDevice('LShoulderRoll').setPosition(-0.10)
+        self.robot.getDevice('RElbowRoll').setPosition(0)
+        self.robot.getDevice('LElbowRoll').setPosition(0)
 
     def arms_to_normal_position(self):
-        self.robot.getDevice('RShoulderPitch').setPosition(1.2)
-        self.robot.getDevice('LShoulderPitch').setPosition(1.2)
-        self.robot.getDevice('RShoulderRoll').setPosition(0.0)
-        self.robot.getDevice('LShoulderRoll').setPosition(0.0)
+        self.robot.getDevice('RShoulderRoll').setPosition(-1.32)
+        self.robot.getDevice('LShoulderRoll').setPosition(1.32)
+        self.robot.getDevice('RElbowRoll').setPosition(1.30)
+        self.robot.getDevice('LElbowRoll').setPosition(-1.30)
