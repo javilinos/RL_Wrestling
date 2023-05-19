@@ -204,9 +204,9 @@ class Wrestler(Robot):
         rl_model = RecurrentPPO.load("runner_model")
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
-            # t2 = self.getTime()
-            # if (t2-t1) < 4:
-            #     self.action_node.execute_action([0.0])
+            t2 = self.getTime()
+            if (t2-t1) < 4:
+                self.action_node.execute_action([0.0])
 
             # else:
             if (fall_detector.check()):
