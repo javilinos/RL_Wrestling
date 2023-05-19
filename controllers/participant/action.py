@@ -68,6 +68,11 @@ class Action():
             self.robot.library.play("Hit")
             self.robot.step(self.time_step)
         #self.robot.library.play("Hit")
+    
+    def stand(self):
+        while not self.robot.library.isOver("Stand"):
+            self.robot.library.play("Stand")
+            self.robot.step(self.time_step)      
 
     def arms_to_attacking_position(self):
         self.robot.getDevice('RShoulderRoll').setPosition(-1.32)
