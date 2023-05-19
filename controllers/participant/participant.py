@@ -190,7 +190,7 @@ class Wrestler(Robot):
         #################################################################################
         ############################# TESTING ###########################################
         #################################################################################
-        t1 = self.getTime()
+        
         print ("Initializing Fall detector")
         fall_detector = FallDetection(self.time_step, self)
         print ("Initializing Observation")
@@ -202,28 +202,29 @@ class Wrestler(Robot):
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
         rl_model = RecurrentPPO.load("runner_model")
-
+        t1 = self.getTime()
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             t2 = self.getTime()
             if (t2-t1) < 4:
                 self.action_node.execute_action([0.0])
+                self.action_node.arms_to_running_position()
 
-            # else:
-            if (fall_detector.check()):
-                self.action_node.reset_gait_manager()
-            # area = observation.detect_robot_position()
-            # if area is not None and area < 200 and area > 150:
-            #     self.action_node.hit_front_robot()
-            # else:
-            #     self.action_node.arms_to_normal_position()
-            obs = observation.image_to_predict()
-            # if (observation.get_l_sensor() < 0.3 or observation.get_r_sensor() < 0.3):
-            #     self.action_node.hit_front_robot()
+            else:
+                if (fall_detector.check()):
+                    self.action_node.reset_gait_manager()
+                # area = observation.detect_robot_position()
+                # if area is not None and area < 200 and area > 150:
+                #     self.action_node.hit_front_robot()
+                # else:
+                #     self.action_node.arms_to_normal_position()
+                obs = observation.image_to_predict()
+                # if (observation.get_l_sensor() < 0.3 or observation.get_r_sensor() < 0.3):
+                #     self.action_node.hit_front_robot()
 
-            self.action_node.arms_to_running_position()
-            action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
-            episode_starts = np.zeros((num_envs,), dtype=bool)
-            self.action_node.execute_action(action)
+                self.action_node.arms_to_running_position()
+                action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
+                episode_starts = np.zeros((num_envs,), dtype=bool)
+                self.action_node.execute_action(action)
 
         #################################################################################
         ############################# EVALUATING ########################################

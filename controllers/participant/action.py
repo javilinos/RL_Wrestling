@@ -63,11 +63,10 @@ class Action():
         self.gait_manager = GaitManager(self.robot, self.time_step)
 
     def hit_front_robot(self):
-        return
-        # while not self.robot.library.isOver("Hit"):
-        #     self.robot.library.play("Stand")
-        #     self.robot.library.play("Hit")
-        #     self.robot.step(self.time_step)
+        while not self.robot.library.isOver("Hit"):
+            self.robot.library.play("Stand")
+            self.robot.library.play("Hit")
+            self.robot.step(self.time_step)
         #self.robot.library.play("Hit")
 
     def arms_to_attacking_position(self):
