@@ -35,9 +35,9 @@ class Reward:
             coverage = math.sqrt(coverage)
             
             if coverage > self.coverage_gained:
-                # reward = coverage - self.coverage_gained
+                reward = coverage - self.coverage_gained
                 self.coverage_gained = coverage
-                
+               
         distance = math.sqrt(rel_x**2 + rel_y**2)
         distance = distance / 2.45
         distance = - distance
@@ -76,13 +76,13 @@ class Reward:
             done = True
 
         #if distance > -0.2 and rel_yaw > 0.9:
-        if distance > -0.2:
+        if distance > -0.1:
             reward = -10
             self.op_ko_count = 0
             self.coverage_gained = 0.0
             done = True
 
-        reward += 0.01
+        #reward += 0.1
 
         return reward, done
     

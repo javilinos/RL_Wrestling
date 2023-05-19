@@ -119,11 +119,11 @@ class CustomCNN(BaseFeaturesExtractor):
         self.cnn = nn.Sequential(
             nn.Conv2d(n_input_channels, 32, kernel_size=8, stride=4, padding=0),
             nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=0),
+            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=0),
             nn.ReLU(),
-            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=0),
+            nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=0),
             nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=2, stride=1, padding=0),
+            nn.Conv2d(128, 128, kernel_size=1, stride=1, padding=0),
             nn.ReLU(),
             nn.Flatten(),
         )
@@ -169,12 +169,11 @@ class Wrestler(Robot):
         # observation = Observation(self)
         # obs = observation.get_observation_state()
         # reward = Reward(self, obs[0], obs[1])
-        # action = Action(self, self.time_step)
         # cb = CustomCallback(self)
         
-        # env = Environment(observation, action, reward, self)
+        # env = Environment(observation, self.action_node, reward, self)
         # env = Monitor(env)
-        # checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_8", name_prefix="runner_model")
+        # checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_9", name_prefix="runner_model")
         # #checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_1", name_prefix="rl_model")
         # model = RecurrentPPO("CnnLstmPolicy", env, tensorboard_log="/home/javilinos/PPO", verbose=1, ent_coef=0.01, learning_rate=3e-05, gae_lambda=0.95, clip_range=0.1, n_steps=1024, batch_size=256, n_epochs=20, normalize_advantage=True, use_sde=True, sde_sample_freq=8, policy_kwargs=dict(
         #     ortho_init = True,
@@ -185,7 +184,7 @@ class Wrestler(Robot):
         #     )
         # )
         # print("Starting mission...")
-        # model.learn(total_timesteps=3000000, callback=[cb, checkpoint_callback])
+        # model.learn(total_timesteps=4000000, callback=[cb, checkpoint_callback])
 
 
         #################################################################################
@@ -197,13 +196,12 @@ class Wrestler(Robot):
         print ("Initializing Observation")
         observation = Observation(self)
         print ("Initializing Action")
-        
         lstm_states = None
         num_envs = 1
         # Episode start signals are used to reset the lstm states
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
-        rl_model = RecurrentPPO.load("attacker_model_v2.0.zip")
+        rl_model = RecurrentPPO.load("runner_model")
 
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             # t2 = self.getTime()
@@ -219,10 +217,10 @@ class Wrestler(Robot):
             # else:
             #     self.action_node.arms_to_normal_position()
             obs = observation.image_to_predict()
-            if (observation.get_l_sensor() < 0.4 or observation.get_r_sensor() < 0.4):
-                self.action_node.hit_front_robot()
-            else:
-                self.action_node.arms_to_normal_position()
+            # if (observation.get_l_sensor() < 0.3 or observation.get_r_sensor() < 0.3):
+            #     self.action_node.hit_front_robot()
+
+            self.action_node.arms_to_running_position()
             action, lstm_states = rl_model.predict(obs, state=lstm_states, episode_start=episode_starts)
             episode_starts = np.zeros((num_envs,), dtype=bool)
             self.action_node.execute_action(action)

@@ -14,11 +14,9 @@ class Environment(Env):
         super().__init__()
         # self.action_space = spaces.Box(np.array((0, 0, 0, 0, 0, 0, 0, 0, 0)),
         #  np.array((1, 1, 1, 1, 1, 1, 1, 1, 1)), dtype=np.int8)
-        self.num_frames = 1
-        self.frames = []
         self.action_space = spaces.Box(np.array((-1.0)), np.array((1.0)), dtype=np.float32)
         # self.observation_space = spaces.Box(np.array((-1.0, -1.0, -1.0, -1.0, -1.0, -1.0)), np.array((1.0, 1.0, 1.0, 1.0, 1.0, 1.0)), dtype=np.float32)
-        self.observation_space = spaces.Box(low=0, high=255, shape=(self.num_frames, 84, 84), dtype=np.uint8)
+        self.observation_space = spaces.Box(low=0, high=255, shape=(1, 84, 84), dtype=np.uint8)
         self.render_mode = False
         self.robot = robot 
         self.observation = observation
@@ -44,13 +42,11 @@ class Environment(Env):
         #     self.action.stop_last_action()
 
         self.robot.step(self.time_step)
+        self.action.arms_to_running_position()
         self.action.execute_action(action)
-        self.robot.getDevice('RShoulderPitch').setPosition(1.2)
-        self.robot.getDevice('LShoulderPitch').setPosition(1.2)
         obs_state = self.observation.get_observation_state()
-        self.frames.append(self.observation.get_observation_image())
+        frame = self.observation.get_observation_image()
         #self.observation.get_joint_states()
-        self.frames.pop(0)
         rew, done = self.reward.calculate_reward(
             obs_state[0], obs_state[1], obs_state[2], obs_state[3], obs_state[4], obs_state[5], obs_state[6], obs_state[7], obs_state[8])
         self.n_steps += 1
@@ -60,7 +56,7 @@ class Environment(Env):
             rew = 10
             self.n_steps = 0
 
-        obs = np.stack(self.frames, axis=0)
+        obs = np.expand_dims(frame, axis=0)
         
         return obs, rew, done, False, {}
 
@@ -97,11 +93,11 @@ class Environment(Env):
         self.robot.simulationSetMode(2)
         self.action.reset_gait_manager()
         obs_state = self.observation.get_observation_state()
-        self.frames = [self.observation.get_observation_image()] * self.num_frames
+        frame = self.observation.get_observation_image()
         
         self.reward.clean_reward()
         self.reward.clean_min_max(obs_state[0], obs_state[1])
-        obs = np.stack(self.frames, axis=0)
+        obs = np.expand_dims(frame, axis=0)
         
         return obs, {}
     
