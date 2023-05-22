@@ -52,8 +52,10 @@ class Observation():
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         resized = cv2.resize(gray, (84, 84))
+
+        obs = np.expand_dims(resized, axis=0)
         
-        return resized
+        return obs
     
     def image_to_predict(self):
         img = self.camera.get_image()
@@ -85,7 +87,7 @@ class Observation():
         self.tm.add_transform("robot", "world", world_to_oponent)
 
         p = self.mat_to_position(self.tm.get_transform("robot", "oponent"))
-
+        print(p)
         #o = self.mat_
         
         if position[2] > 1.0: position[2] = 1.0

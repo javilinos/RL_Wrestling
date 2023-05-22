@@ -9,8 +9,8 @@ ARG WEBOTS_PACKAGE_PREFIX=
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install --yes wget bzip2 && rm -rf /var/lib/apt/lists/ && \
- wget https://github.com/cyberbotics/webots/releases/download/$WEBOTS_VERSION/webots-$WEBOTS_VERSION-x86-64$WEBOTS_PACKAGE_PREFIX.tar.bz2 && \
- tar xjf webots-*.tar.bz2 && rm webots-*.tar.bz2
+  wget https://github.com/cyberbotics/webots/releases/download/$WEBOTS_VERSION/webots-$WEBOTS_VERSION-x86-64$WEBOTS_PACKAGE_PREFIX.tar.bz2 && \
+  tar xjf webots-*.tar.bz2 && rm webots-*.tar.bz2
 
 FROM ${BASE_IMAGE}
 
@@ -39,18 +39,18 @@ RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir torch torchvision torchaudio
 # Additional dependencies for the utils folder
 RUN apt-get update && apt-get install -y \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+  python3-pip \
+  && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir \
-    numpy \
-    opencv-python \
-    scipy \
-    ahrs \
-    stable-baselines3==2.0.0a5 \
-    sb3-contrib==2.0.0a4 \
-    gymnasium \
-    pytransform3d 
+  numpy \
+  opencv-python \
+  scipy \
+  ahrs \
+  stable-baselines3==2.0.0a5 \
+  sb3-contrib==2.0.0a4 \
+  gymnasium \
+  pytransform3d 
 
 # Environment variables needed for Webots
 # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#remote-extern-controllers
@@ -70,5 +70,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 # Entrypoint command to launch default Python controller script
 # (In shell form to allow variable expansion)
 WORKDIR /usr/local/webots-project/controllers/participant
+
+RUN python3 -u /usr/local/webots-project/controllers/participant/save_model.py
 
 ENTRYPOINT python3 -u participant.py

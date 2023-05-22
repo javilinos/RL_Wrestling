@@ -23,7 +23,6 @@ class Environment(Env):
         self.action = action
         self.reward = reward
         self.time_step = int(self.robot.getBasicTimeStep())
-        self.n_steps = 0
         self.n_episodes = 0
         self.last_action = -1
         self.shm_a = shared_memory.SharedMemory(create=True, size=1, name="env_reset")
@@ -45,24 +44,16 @@ class Environment(Env):
         self.action.arms_to_running_position()
         self.action.execute_action(action)
         obs_state = self.observation.get_observation_state()
-        frame = self.observation.get_observation_image()
+        obs = self.observation.get_observation_image()
         #self.observation.get_joint_states()
         rew, done = self.reward.calculate_reward(
             obs_state[0], obs_state[1], obs_state[2], obs_state[3], obs_state[4], obs_state[5], obs_state[6], obs_state[7], obs_state[8])
-        self.n_steps += 1
         # rew+=self.reward.calculate_action_reward(obs_state, action)
-        if self.n_steps > 2048:
-            done = True
-            rew = 10
-            self.n_steps = 0
 
-        obs = np.expand_dims(frame, axis=0)
-        
         return obs, rew, done, False, {}
 
     def reset(self):
         self.n_episodes+=1
-        self.n_steps = 0
         self.shm_a.buf[0] = 1
         Supervisor.simulationReset(self.robot)
         self.robot.step(self.time_step)
@@ -93,11 +84,10 @@ class Environment(Env):
         self.robot.simulationSetMode(2)
         self.action.reset_gait_manager()
         obs_state = self.observation.get_observation_state()
-        frame = self.observation.get_observation_image()
+        obs = self.observation.get_observation_image()
         
         self.reward.clean_reward()
         self.reward.clean_min_max(obs_state[0], obs_state[1])
-        obs = np.expand_dims(frame, axis=0)
         
         return obs, {}
     

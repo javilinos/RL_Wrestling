@@ -18,7 +18,7 @@ import sys
 from time import time, sleep
 sys.path.append('..')
 import numpy as np
-import pickle
+import cloudpickle
 from time import time
 import threading
 
@@ -117,13 +117,11 @@ class CustomCNN(BaseFeaturesExtractor):
         n_input_channels = observation_space.shape[0]
 
         self.cnn = nn.Sequential(
-            nn.Conv2d(n_input_channels, 32, kernel_size=8, stride=4, padding=0),
+            nn.Conv2d(n_input_channels, 64, kernel_size=7, stride=4, padding=0),
             nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=0),
+            nn.Conv2d(64, 96, kernel_size=5, stride=2, padding=0),
             nn.ReLU(),
-            nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=0),
-            nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=1, stride=1, padding=0),
+            nn.Conv2d(96, 96, kernel_size=3, stride=1, padding=0),
             nn.ReLU(),
             nn.Flatten(),
         )
@@ -173,9 +171,9 @@ class Wrestler(Robot):
         
         # env = Environment(observation, self.action_node, reward, self)
         # env = Monitor(env)
-        # checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_9", name_prefix="runner_model")
+        # checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_10", name_prefix="runner_model")
         # #checkpoint_callback = CheckpointCallback(save_freq=20000, save_path="/home/javilinos/checkpoints/PPO_1", name_prefix="rl_model")
-        # model = RecurrentPPO("CnnLstmPolicy", env, tensorboard_log="/home/javilinos/PPO", verbose=1, ent_coef=0.01, learning_rate=3e-05, gae_lambda=0.95, clip_range=0.1, n_steps=1024, batch_size=256, n_epochs=20, normalize_advantage=True, use_sde=True, sde_sample_freq=8, policy_kwargs=dict(
+        # model = RecurrentPPO("CnnLstmPolicy", env, tensorboard_log="/home/javilinos/PPO", verbose=1, ent_coef=0.01, learning_rate=3e-05, gae_lambda=0.95, clip_range=0.2, n_steps=1024, batch_size=256, n_epochs=10, normalize_advantage=True, use_sde=True, sde_sample_freq=8, policy_kwargs=dict(
         #     ortho_init = True,
         #     share_features_extractor = True,
         #     normalize_images = True,
@@ -201,12 +199,14 @@ class Wrestler(Robot):
         # Episode start signals are used to reset the lstm states
         episode_starts = np.ones((num_envs,), dtype=bool)
         print ("Initializing RL model")
-        rl_model = RecurrentPPO.load("runner_model")
+        with open("model.pkl", "rb") as f:
+            rl_model = cloudpickle.load(f)
+
         t1 = self.getTime()
         runned = False
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             t2 = self.getTime()
-            if (t2-t1) < 5:
+            if (t2-t1) < 4:
                 self.action_node.execute_action([0.0])
                 self.action_node.arms_to_running_position()
                 runned = True

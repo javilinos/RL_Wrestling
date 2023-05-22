@@ -12,12 +12,13 @@ class Reward:
         self.op_ko_count = 0
         self.time_step = int(wrestler.getBasicTimeStep())
         self.coverage_gained = 0.0
-        self.time_counter = 0.0
+        self.n_steps = 0.0
 
     def calculate_reward(self, pos_x, pos_y, pos_z, op_pos_x, op_pos_y, op_pos_z, rel_x, rel_y, rel_yaw_2_oponent):
 
         done = False
         reward = 0.0
+        self.n_steps += 1
 
 ################################# Continuous reward #####################################
 
@@ -35,23 +36,29 @@ class Reward:
             coverage = math.sqrt(coverage)
             
             if coverage > self.coverage_gained:
-                reward = coverage - self.coverage_gained
-                self.coverage_gained = coverage
-               
+                # reward = coverage - self.coverage_gained
+                # reward = reward * 10
+                if (coverage - self.coverage_gained) > 0.0:
+                    reward = 0.05
+                else:
+                    reward = -0.01
+
+                self.coverage_gained = coverage      
+
         distance = math.sqrt(rel_x**2 + rel_y**2)
         distance = distance / 2.45
-        distance = - distance
+        distance = -(1 - distance)
         distance = np.clip(distance, -1.0, 0.0)
-        # reward += distance * 0.1
+        reward += distance * 0.01
 
-        # rel_yaw = 1 - abs(rel_yaw_2_oponent)
-        # rel_yaw = rel_yaw*2 - 1
-        # reward += rel_yaw * 0.1
+        rel_yaw = 1 - abs(rel_yaw_2_oponent)
+        rel_yaw = rel_yaw*2 - 1
+        reward -= rel_yaw * 0.01
 
-        distance_to_center = math.sqrt(position[0]**2 + position[1]**2)
-        distance_to_center = distance_to_center/math.sqrt(2)
-        distance_to_center = -np.clip(distance_to_center, 0.0, 1.0)
-        reward += distance_to_center * 0.01
+        # distance_to_center = math.sqrt(position[0]**2 + position[1]**2)
+        # distance_to_center = distance_to_center/math.sqrt(2)
+        # distance_to_center = -np.clip(distance_to_center, 0.0, 1.0)
+        # reward += distance_to_center * 0.01
 
         #print(reward)
         # position below threshold (0.9) or robot exploded (any coordinate above 1.5)
@@ -76,12 +83,16 @@ class Reward:
             done = True
 
         #if distance > -0.2 and rel_yaw > 0.9:
-        if distance > -0.1:
-            reward = -10
+        if distance < -0.87:
+            reward = -20
             self.op_ko_count = 0
             self.coverage_gained = 0.0
             done = True
 
+        if self.n_steps > 2048:
+            reward = self.coverage_gained*2
+            print(reward)
+            done = True
         #reward += 0.1
 
         return reward, done
@@ -105,7 +116,7 @@ class Reward:
     
     def clean_reward(self):
         reward = 0.0
-        self.time_counter = 0.0
+        self.n_steps = 0.0
         self.coverage_gained = 0.0
 
     def clean_min_max(self, initial_x, initial_y):
