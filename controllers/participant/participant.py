@@ -206,7 +206,7 @@ class Wrestler(Robot):
         runned = False
         while self.step(self.time_step) != -1 :  # mandatory function to make the simulation run
             t2 = self.getTime()
-            if (t2-t1) < 5:
+            if (t2-t1) < 4:
                 self.action_node.execute_action([0.0])
                 self.action_node.arms_to_running_position()
                 runned = True
