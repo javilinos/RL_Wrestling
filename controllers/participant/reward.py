@@ -40,8 +40,6 @@ class Reward:
                 # reward = reward * 10
                 if (coverage - self.coverage_gained) > 0.0:
                     reward = 0.05
-                else:
-                    reward = -0.01
 
                 self.coverage_gained = coverage      
 
@@ -51,9 +49,9 @@ class Reward:
         distance = np.clip(distance, -1.0, 0.0)
         reward += distance * 0.01
 
-        rel_yaw = 1 - abs(rel_yaw_2_oponent)
-        rel_yaw = rel_yaw*2 - 1
-        reward -= rel_yaw * 0.01
+        # rel_yaw = 1 - abs(rel_yaw_2_oponent)
+        # rel_yaw = rel_yaw*2 - 1
+        # reward -= rel_yaw * 0.01
 
         # distance_to_center = math.sqrt(position[0]**2 + position[1]**2)
         # distance_to_center = distance_to_center/math.sqrt(2)
